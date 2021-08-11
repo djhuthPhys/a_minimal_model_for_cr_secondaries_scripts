@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from matplotlib.ticker import LogLocator
+
 
 def plot_e_spectrum(energy, flux, energy_sig, flux_sig, title, color, mfc):
     """
@@ -29,6 +31,10 @@ def plot_e_spectrum(energy, flux, energy_sig, flux_sig, title, color, mfc):
     ax.tick_params(axis='both', which='major', direction='in', length=6, width=1)
     ax.tick_params(axis='both', which='minor', direction='in', length=4, width=1)
     ax.tick_params(axis='both', which='both', bottom=True, top=True, left=True, right=True, labelsize=15)
+    ax.yaxis.set_major_locator(LogLocator(numticks=15))  # (1)
+    ax.yaxis.set_minor_locator(LogLocator(numticks=15, subs=np.arange(2, 10)))
+    fig.set_size_inches(6, 10)
+    fig.tight_layout()
     plt.show()
 
 
@@ -57,9 +63,54 @@ def plot_spectrum(energy, flux, flux_sig, title, color, mfc, sym='o'):
     ax.tick_params(axis='both', which='major', direction='in', length=6, width=1)
     ax.tick_params(axis='both', which='minor', direction='in', length=4, width=1)
     ax.tick_params(axis='both', which='both', bottom=True, top=True, left=True, right=True, labelsize=15)
+    ax.yaxis.set_major_locator(LogLocator(numticks=15))  # (1)
+    ax.yaxis.set_minor_locator(LogLocator(numticks=15, subs=np.arange(2, 10)))
+    fig.set_size_inches(6, 10)
+    fig.tight_layout()
     plt.show()
 
     return fig, ax
+
+
+def plot_p_bar_p(pos=False):
+    """
+    Plots the anti-proton to proton ratio. Option to add the positron to proton ratio to plot in pos
+    :return:
+    """
+    color = 'green'
+    mfc = '#BAF282'
+    symbol = 's'
+
+    data = pd.read_csv('./data/AMS_2_anti_proton_data.csv')
+    rigidity = data['Rigidity Low']
+    ratio = data['Ratio'] * data['Ratio order']
+    ratio_sig = data['Total sig_R'] * data['Ratio order']
+
+    extra_data = pd.read_csv('./data/AMS_2_positron_proton_ratio.csv')
+    rigidity_e = extra_data['Rigidity']
+    ratio_e = extra_data['Ratio']
+    ratio_sig_e = extra_data['Total sig']
+
+    fig, ax = plt.subplots()
+    ax.errorbar(rigidity, ratio, yerr=ratio_sig, xerr=None, fmt=symbol, color=color, markerfacecolor=mfc, markersize=5)
+    if pos:
+        ax.errorbar(rigidity_e, ratio_e, yerr=ratio_sig_e, xerr=None, fmt='^', color='red', markerfacecolor='#ff8282',
+                    markersize=5)
+        ax.legend([r'$\bar{p}/p$', r'$e^{+}/p$'])
+    ax.set_title(r'AMS 02 Ratios', size=15)
+    ax.set_yscale('log')
+    ax.set_xscale('log')
+    ax.set_xlabel('Rigidity (GV)', fontsize=15)
+    ax.set_ylabel('Ratio', fontsize=15)
+    ax.set_xlim(left=.5)
+    ax.tick_params(axis='both', which='major', direction='in', length=6, width=1)
+    ax.tick_params(axis='both', which='minor', direction='in', length=4, width=1)
+    ax.tick_params(axis='both', which='both', bottom=True, top=True, left=True, right=True, labelsize=15)
+    ax.yaxis.set_major_locator(LogLocator(numticks=15))  # (1)
+    ax.yaxis.set_minor_locator(LogLocator(numticks=15, subs=np.arange(2, 10)))
+    fig.set_size_inches(6, 10)
+    fig.tight_layout()
+    plt.show()
 
 
 def multi_plot(species_dict):
@@ -95,6 +146,10 @@ def multi_plot(species_dict):
     ax.tick_params(axis='both', which='major', direction='in', length=6, width=1)
     ax.tick_params(axis='both', which='minor', direction='in', length=4, width=1)
     ax.tick_params(axis='both', which='both', bottom=True, top=True, left=True, right=True, labelsize=15)
+    ax.yaxis.set_major_locator(LogLocator(numticks=15))  # (1)
+    ax.yaxis.set_minor_locator(LogLocator(numticks=15, subs=np.arange(2, 10)))
+    fig.set_size_inches(6, 10)
+    fig.tight_layout()
     plt.show()
 
 
@@ -138,6 +193,10 @@ def norm_multi_plot(species_dict, norm_species):
     ax.tick_params(axis='both', which='major', direction='in', length=6, width=1)
     ax.tick_params(axis='both', which='minor', direction='in', length=4, width=1)
     ax.tick_params(axis='both', which='both', bottom=True, top=True, left=True, right=True, labelsize=15)
+    ax.yaxis.set_major_locator(LogLocator(numticks=15))  # (1)
+    ax.yaxis.set_minor_locator(LogLocator(numticks=15, subs=np.arange(2, 10)))
+    fig.set_size_inches(6, 10)
+    fig.tight_layout()
     plt.show()
 
 
@@ -197,7 +256,11 @@ def ratio_plot(species_dict):
         size = species_dict[key][5]
 
         # Define data to plot
-        x = (primary_data['Rigidity Low'] + primary_data['Rigidity High']) / 2
+        print(re.sub(r'[^a-zA-Z]', '', key))
+        if re.sub(r'[^a-zA-Z]', '', key) == 'positron' and species_dict[key][0] == 'proton':
+            x = primary_data['Rigidity']
+        else:
+            x = (primary_data['Rigidity Low'] + primary_data['Rigidity High']) / 2
         y = primary_data['Ratio']
         y_sig = primary_data['Total sig']
 
@@ -205,7 +268,7 @@ def ratio_plot(species_dict):
                     fillstyle=fst, markersize=size)
 
     ax.legend([species_dict[key][6] for key in species_dict])
-    ax.set_title('AMS 02 Ratios', size=15)
+    ax.set_title(r'AMS 02 FLux Ratios', size=15)
     ax.set_yscale('log')
     ax.set_xscale('log')
     ax.set_xlabel('Rigidity (GV)', fontsize=15)
@@ -213,6 +276,10 @@ def ratio_plot(species_dict):
     ax.tick_params(axis='both', which='major', direction='in', length=6, width=1)
     ax.tick_params(axis='both', which='minor', direction='in', length=4, width=1)
     ax.tick_params(axis='both', which='both', bottom=True, top=True, left=True, right=True, labelsize=15)
+    ax.yaxis.set_major_locator(LogLocator(numticks=15))  # (1)
+    ax.yaxis.set_minor_locator(LogLocator(numticks=15, subs=np.arange(2, 10)))
+    fig.set_size_inches(6, 10)
+    fig.tight_layout()
     plt.show()
 
 
@@ -467,25 +534,25 @@ def main():
         # norm_multi_plot(primary_dict, 'carbon')
 
     if ratioplot:
-        # Plot B/C, Be/C, and Li/C ratio on same plot
-        species_dict = {'boron': ['carbon', '^', 'green', '#baf282', 'full', 5, 'B/C'],
-                        'lithium': ['carbon', 's', 'red', '#ff8282', 'full', 5, 'Li/C'],
-                        'beryllium': ['carbon', 'o', 'blue', '#82cfff', 'full', 5, 'Be/C']}
-
-        ratio_plot(species_dict)
-
-        # Plot B/O, Be/O, and Li/O ratio on same plot
-        species_dict = {'boron': ['oxygen', '^', 'green', '#baf282', 'full', 5, 'B/O'],
-                        'lithium': ['oxygen', 's', 'red', '#ff8282', 'full', 5, 'Li/O'],
-                        'beryllium': ['oxygen', 'o', 'blue', '#82cfff', 'full', 5, 'Be/O']}
-
-        ratio_plot(species_dict)
-
-        # Plot B/O, Be/O, and Li/O ratio on same plot
-        # species_dict = {'lithium': ['boron', '^', 'green', '#baf282', 'full', 5, 'Li/B'],
-        #                 'lithium_': ['beryllium', 's', 'red', '#ff8282', 'full', 5, 'Li/Be']}
+        # # Plot B/C, Be/C, and Li/C ratio on same plot
+        # species_dict = {'boron': ['carbon', '^', 'green', '#baf282', 'full', 5, 'B/C'],
+        #                 'lithium': ['carbon', 's', 'red', '#ff8282', 'full', 5, 'Li/C'],
+        #                 'beryllium': ['carbon', 'o', 'blue', '#82cfff', 'full', 5, 'Be/C']}
         #
         # ratio_plot(species_dict)
+        #
+        # # Plot B/O, Be/O, and Li/O ratio on same plot
+        # species_dict = {'boron': ['oxygen', '^', 'green', '#baf282', 'full', 5, 'B/O'],
+        #                 'lithium': ['oxygen', 's', 'red', '#ff8282', 'full', 5, 'Li/O'],
+        #                 'beryllium': ['oxygen', 'o', 'blue', '#82cfff', 'full', 5, 'Be/O']}
+        #
+        # ratio_plot(species_dict)
+
+        # Plot e+/p, p-/p, ratio on same plot
+        species_dict = {'positron': ['proton', '^', 'green', '#baf282', 'full', 5, r'$e^{+}/p$'],
+                        'anti_proton': ['proton', 's', 'red', '#ff8282', 'full', 5, r'\bar{p}/p$']}
+
+        ratio_plot(species_dict)
 
 
 if __name__ == '__main__':
