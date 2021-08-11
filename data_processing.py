@@ -52,7 +52,7 @@ def plot_spectrum(energy, flux, flux_sig, title, color, mfc, sym='o'):
     ax.set_yscale('log')
     ax.set_xscale('log')
     ax.set_xlabel('Rigidity (GV)', fontsize=15)
-    ax.set_ylabel('L/M Ratio', fontsize=15)
+    ax.set_ylabel(r'B Flux [(m$^2$ sr s GV)$^{-1}$]', fontsize=15)
     # ax.set_yticks(y_ticks)
     ax.tick_params(axis='both', which='major', direction='in', length=6, width=1)
     ax.tick_params(axis='both', which='minor', direction='in', length=4, width=1)
@@ -454,17 +454,17 @@ def main():
         multi_plot(primary_dict)
 
         # Plot normalized secondary CRs on same plot (Li, Be, B)
-        secondary_dict = {'lithium': ['s', 'red', '#ff8282', 'full', 5, 'Li'],
-                          'beryllium': ['o', 'blue', '#82cfff', 'full', 5, 'Be'],
-                          'boron': ['^', 'green', '#baf282', 'full', 5, 'B']}
-
-        norm_multi_plot(secondary_dict, 'beryllium')
-
-        # Plot primary Crs on same plot (C, O)
-        primary_dict = {'carbon': ['o', 'red', '#ff8282', 'full', 7, 'C'],
-                        'oxygen': ['s', 'green', '#baf282', 'full', 5, 'O']}
-
-        norm_multi_plot(primary_dict, 'carbon')
+        # secondary_dict = {'lithium': ['s', 'red', '#ff8282', 'full', 5, 'Li'],
+        #                   'beryllium': ['o', 'blue', '#82cfff', 'full', 5, 'Be'],
+        #                   'boron': ['^', 'green', '#baf282', 'full', 5, 'B']}
+        #
+        # norm_multi_plot(secondary_dict, 'beryllium')
+        #
+        # # Plot primary CRs on same plot (C, O)
+        # primary_dict = {'carbon': ['o', 'red', '#ff8282', 'full', 7, 'C'],
+        #                 'oxygen': ['s', 'green', '#baf282', 'full', 5, 'O']}
+        #
+        # norm_multi_plot(primary_dict, 'carbon')
 
     if ratioplot:
         # Plot B/C, Be/C, and Li/C ratio on same plot
