@@ -81,28 +81,28 @@ def plot_p_bar_p(pos=False):
     mfc = '#BAF282'
     symbol = 's'
 
-    data = pd.read_csv('./data/AMS_2_anti_proton_data.csv')
-    rigidity = data['Rigidity Low']
-    ratio = data['Ratio'] * data['Ratio order']
-    ratio_sig = data['Total sig_R'] * data['Ratio order']
+    # data = pd.read_csv('./data/AMS_2_anti_proton_data.csv')
+    # rigidity = data['Rigidity Low']
+    # ratio = data['Ratio'] * data['Ratio order']
+    # ratio_sig = data['Total sig_R'] * data['Ratio order']
 
-    extra_data = pd.read_csv('./data/AMS_2_positron_proton_ratio.csv')
-    rigidity_e = extra_data['Rigidity']
-    ratio_e = extra_data['Ratio']
-    ratio_sig_e = extra_data['Total sig']
+    extra_data = pd.read_csv('./data/AMS_2_boron_carbon_plus_oxygen_ratio.csv')
+    rigidity = extra_data['Rigidity']
+    ratio = extra_data['Ratio']
+    ratio_sig = extra_data['Total sig']
 
     fig, ax = plt.subplots()
     ax.errorbar(rigidity, ratio, yerr=ratio_sig, xerr=None, fmt=symbol, color=color, markerfacecolor=mfc, markersize=5)
-    if pos:
-        ax.errorbar(rigidity_e, ratio_e, yerr=ratio_sig_e, xerr=None, fmt='^', color='red', markerfacecolor='#ff8282',
-                    markersize=5)
-        ax.legend([r'$\bar{p}/p$', r'$e^{+}/p$'])
-    ax.set_title(r'AMS 02 Ratios', size=15)
+    # if pos:
+        # ax.errorbar(rigidity_e, ratio_e, yerr=ratio_sig_e, xerr=None, fmt='^', color='red', markerfacecolor='#ff8282',
+        #             markersize=5)
+        # ax.legend([r'$\bar{p}/p$', r'$e^{+}/p$'])
+    ax.set_title(r'AMS 02 B/(C+O) Ratio', size=15)
     ax.set_yscale('log')
     ax.set_xscale('log')
     ax.set_xlabel('Rigidity (GV)', fontsize=15)
     ax.set_ylabel('Ratio', fontsize=15)
-    ax.set_xlim(left=.5)
+    ax.set_xlim(left=1)
     ax.tick_params(axis='both', which='major', direction='in', length=6, width=1)
     ax.tick_params(axis='both', which='minor', direction='in', length=4, width=1)
     ax.tick_params(axis='both', which='both', bottom=True, top=True, left=True, right=True, labelsize=15)
@@ -110,6 +110,7 @@ def plot_p_bar_p(pos=False):
     ax.yaxis.set_minor_locator(LogLocator(numticks=15, subs=np.arange(2, 10)))
     fig.set_size_inches(6, 10)
     fig.tight_layout()
+    plt.savefig('./plots/test.pdf')
     plt.show()
 
 
