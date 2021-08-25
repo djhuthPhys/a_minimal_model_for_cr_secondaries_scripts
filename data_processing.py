@@ -131,9 +131,14 @@ def multi_plot(species_dict):
         fst = species_dict[key][3]
         size = species_dict[key][4]
 
-        x = (data['Rigidity Low'] + data['Rigidity High'])/2
-        y = data['Flux'] * data['Order']
-        y_sig = data['Total sig'] * data['Order']
+        if key in ('electron', 'positron'):
+            x = data['E']
+            y = data['Flux'] * data['Order']
+            y_sig = data['Total sig'] * data['Order']
+        else:
+            x = (data['Rigidity Low'] + data['Rigidity High'])/2
+            y = data['Flux'] * data['Order']
+            y_sig = data['Total sig'] * data['Order']
 
         ax.errorbar(x, y, yerr=y_sig, xerr=None, fmt=symbol, color=border_color, markerfacecolor=face_color,
                     fillstyle=fst, markersize=size)
@@ -507,18 +512,34 @@ def main():
         plot_spectrum(he_rigidity, he_flux, he_flux_sig, 'AMS-02 Boron Flux', color, mfc)
 
     if multiplot:
-        # Plot secondary CRs on same plot (Li, Be, B)
-        secondary_dict = {'lithium': ['s', 'red', '#ff8282', 'full', 5, 'Li'],
-                          'beryllium': ['o', 'blue', '#82cfff', 'full', 5, 'Be'],
-                          'boron': ['^', 'green', '#baf282', 'full', 5, 'B']}
+        # # Plot secondary CRs on same plot (Li, Be, B)
+        # secondary_dict = {'lithium': ['s', 'red', '#ff8282', 'full', 5, 'Li'],
+        #                   'beryllium': ['o', 'blue', '#82cfff', 'full', 5, 'Be'],
+        #                   'boron': ['^', 'green', '#baf282', 'full', 5, 'B']}
+        #
+        # multi_plot(secondary_dict)
+        #
+        # # Plot primary Crs on same plot (C, O)
+        # primary_dict = {'carbon': ['o', 'red', '#ff8282', 'full', 7, 'C'],
+        #                 'oxygen': ['s', 'green', '#baf282', 'full', 5, 'O']}
+        #
+        # multi_plot(primary_dict)
 
-        multi_plot(secondary_dict)
+        # # Plot protons, antiprotons, and positrons
+        # particle_dict = {'proton': ['s', 'red', '#ff8282', 'full', 5, r'$p$'],
+        #                   'anti_proton': ['o', 'blue', '#82cfff', 'full', 5, r'$\bar{p}$'],
+        #                   'positron': ['^', 'green', '#baf282', 'full', 5, r'$e^+$']}
+        #
+        # multi_plot(particle_dict)
 
-        # Plot primary Crs on same plot (C, O)
-        primary_dict = {'carbon': ['o', 'red', '#ff8282', 'full', 7, 'C'],
-                        'oxygen': ['s', 'green', '#baf282', 'full', 5, 'O']}
+        # Plot
+        particle_dict = {'lithium': ['s', 'red', '#ff8282', 'full', 5, 'Li'],
+                         'beryllium': ['o', 'blue', '#82cfff', 'full', 5, 'Be'],
+                         'boron': ['^', 'green', '#baf282', 'full', 5, 'B'],
+                         'carbon': ['+', 'purple', '#be82ff', 'full', 5, 'C'],
+                         'oxygen': ['>', 'orange', '#ffc182', 'full', 5, 'O']}
 
-        multi_plot(primary_dict)
+        multi_plot(particle_dict)
 
         # Plot normalized secondary CRs on same plot (Li, Be, B)
         # secondary_dict = {'lithium': ['s', 'red', '#ff8282', 'full', 5, 'Li'],
@@ -557,6 +578,6 @@ def main():
 
 if __name__ == '__main__':
     plot_all = 0
-    multiplot = 0
-    ratioplot = 1
+    multiplot = 1
+    ratioplot = 0
     main()
